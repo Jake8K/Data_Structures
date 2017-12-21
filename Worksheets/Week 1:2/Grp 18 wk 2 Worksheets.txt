@@ -1,0 +1,366 @@
+# ifndef ArrayBagStack
+# define ArrayBagStack
+
+# define TYPE int
+# define EQ(a, b) (a == b)
+
+struct arrayBagStack {
+	TYPE data [100];
+	int count;
+};
+
+void initArray(struct arrayBagStack * b);
+void addArray (struct arrayBagStack * b, TYPE v);
+int containsArray (struct arrayBagStack * b, TYPE v);
+void removeArray (struct arrayBagStack * b, TYPE v);
+int sizeArray (struct arrayBagStack * b);
+
+void pushArray (struct arrayBagStack * b, TYPE v);
+TYPE topArray (struct arrayBagStack * b);
+void popArray (struct arrayBagStack * b);
+int isEmptyArray (struct arrayBagStack * b);
+# endif
+
+
+
+Your job, for this worksheet, is to provide implementations for all these operations.
+
+
+void initArray (struct arrayBagStack * b){
+
+	*b = malloc(sizeof(struct arrayBagStack)); //allocate memory for struct
+	
+	assert(b ! = 0); // if b is null, terminate program [#include asser.h]
+	
+	b->count = 0;
+	
+
+
+}
+
+
+
+/* Bag Interface Functions */
+
+void addArray (struct arrayBagStack * b, TYPE v) {
+
+	b->data[b->count] = v;
+	b->count++;
+
+
+}
+
+int containsArray (struct arrayBagStack * b, TYPE v){
+	
+	for (int i = 0; i < 100; i++) {
+		if (b->data[i] == v)
+			return i;
+		}
+	
+	return 0;
+
+}
+
+void removeArray (struct arrayBagStack * b, TYPE v) {
+
+	TYPE temp;
+
+	for (int i = 0; i < 100; i++) {
+		if (b->data[i] == v) {
+			for (int j = i; j < 100; j++) {
+				temp = b->data[++j];
+				b->data[j] = temp;
+			}
+			b->data[b->count] = 0;
+			b->count--;
+		}
+
+}
+
+int sizeArray (struct arrayBagStack * b) {
+
+	return b->count;
+
+}
+
+
+
+/* Stack Interface  Functions */
+
+void pushArray (struct arrayBagStack * b, TYPE v) {
+
+	b->data[b->count] = v;
+	b->count++; 
+
+}
+
+TYPE topArray (struct arrayBagStack * b) {
+
+	return b->data[b->count];
+}
+
+void popArray (struct arrayBagStack * b) {
+
+	b->data[count] = 0;
+	b->count--;
+
+
+}
+
+
+int isEmptyArray (struct arrayBagStack * b) {
+
+	if (b->count = 0)
+		return 1;
+	else
+		return 0;
+		
+}
+
+
+# ifndef TYPE
+# define TYPE int
+# endif
+
+struct DynArr
+{
+	TYPE *data;	/* pointer to the data array */
+	int size;		/* Number of elements in the array */
+	int capacity;	/* capacity of the array */
+};
+
+void initDynArr(struct DynArr *v, int capacity)
+{
+	v->data = malloc(sizeof(TYPE) * capacity);
+	assert(v->data != 0);
+	
+	v->size = 0;
+	v->capacity = capacity;
+
+}	
+void freeDynArr(struct DynArr *v)
+{
+	if(v->data != 0)
+	{
+		free(v->data); 	/* free the space on the heap */
+		v->data = 0;   	/* make it point to null */
+	}
+	v->size = 0;
+	v->capacity = 0;
+}
+
+
+
+int sizeDynArr( struct DynArr *v)
+{
+	return v->size;
+}
+
+
+void   addDynArr(struct DynArr *v, TYPE val)
+{
+	/* Check to see if a resize is necessary */
+	if(v->size >= v->capacity)
+		_setCapacityDynArr(v, 2 * v->capacity);
+	
+	v->data[v->size] = val;
+	v->size++;	
+}
+
+
+void _setCapacityDynArr(struct DynArr *v, int newCap)
+{
+	//create new array
+	struct DynArr newArr;
+	initDynArr (&newArr, newCap);
+	
+	//set size
+	newArr->size = v->size;
+	
+	//copy data
+	for (int i = 0; i < v->capacity; i++) {
+		newArr[i] = v[i];
+	}
+	
+	//free memory 
+	struct DynArray *temp = v;
+	v = newArr;
+	freeDynArr(&temp);
+	
+}
+
+TYPE getDynArr (struct DynArr * da, int position) {
+
+	return da->data[position];
+
+
+
+
+
+}
+
+void putDynArr(struct DynArr * da, int position, TYPEvalue) {
+
+	da->data[position- = TYPEvalue;
+
+
+
+
+}
+
+
+
+/* Write the function swap, which will exchange the values in two positions of a dynamic 
+array. We will use this function in later chapters.	*/
+
+void swapDynArr (struct DynArr * da, int i, int j) {
+
+	int x, y, temp;
+	int check1 = check2 = 0;
+	
+	for (int k = 0; k < da->size; k++)	{
+		if (da->data[k] == i) {
+			x = k;
+			check1 = 1;
+		}
+		if (da->data[k] == j) {
+			y = k;
+			check2 = 1;
+		}
+	}
+	
+	if (check1 == 1 && check2 ==1) {
+		temp = da->data[x];
+		da->data[x] = da->data[y];
+		da->data[y] = temp;
+	}
+
+
+}
+
+/*Write the function removeAtDynArr, which will remove a value at a specified index.  
+Remember, we do not want to leave gaps in the partially filed array.  We will use this 
+function in later chapters.	*/
+
+void removeAtDynArr (struct DynArr * da, int index) {
+
+	for (int i = index; i < da->size; i++) {
+		da->data[i] = da->data[++i];
+	}
+	da->data[size] = 0;
+	da->size--;
+	
+}
+
+/*****************************************************************************************
+write the code for the Stack functions push, pop, top and isEmpty. These functions should 
+use a dynamic array (passed as an argument) for the storage area. Use an assertion to 
+check that the * stack has at least one element when the functions top or pop are called. * 
+Your job will be greatly simplified by making use of the following functions, which you 
+developed in previous lessons:
+*****************************************************************************************/
+
+
+struct DynArr {
+TYPE * data;
+	int size;
+	int capacity;
+	};
+
+/* initialize a dynamic array structure with given capacity */
+	void initDynArr (struct DynArr * da, int initialCapacity);
+
+/* internal method to double the capacity of a dynamic array */
+	void _setCapacityDynArr (struct DynArr * da);
+
+/* release dynamically allocated memory for the dynamic array */
+	void freeDynArr (struct DynArr * da);
+
+/* return number of elements stored in dynamic array */
+	int sizeDynArr (struct DynArr * da);
+
+/* add a value to the end of a dynamically array */
+	void addDynArr (struct DynArr * da, TYPE e);
+
+/* remove the value stored at position in the dynamic array */
+	void removeAtDynArr (struct DynArr * da, int position);
+
+/* retrieve element at a given position */
+	TYPE getDynArray (struct DynArr * da, int position);
+
+/* store element at a given position */
+	void putDynArr (struct DynArr * da, int position, TYPE value);
+
+ 
+# define TYPE int
+
+struct DynArr {
+        TYPE *data;
+        int size;
+        int capacity;
+};
+
+
+/* Dynamic Array implementation of the Stack Interface */
+
+void pushDynArray (struct DynArr * da, TYPE e) {
+	if (da->size == da->capacity)
+ 		addDynArr (da, e);
+ 	else 
+ 		putDynArr (da, da->size, e);
+ 	
+ 	da->size++;
+
+}
+
+TYPE topDynArray (struct DynArr * da) {
+	assert(!isEmptyArray(da));
+	return da->data[size - 1];
+
+}
+
+void popDynArray (struct DynArr * da) {
+	assert(!isEmptyArray(da));
+	da->data[size] = 0;
+	da->size--;
+
+
+}
+
+
+struct DynArr {
+        TYPE * data;
+        int size;
+        int capacity;
+};
+
+	/* the following were written in earlier lessons */
+void initDynArr (struct DynArr * da, int initCap);
+void addDynArr(struct DynArr * da, TYPE e);      
+
+
+/* remove was shown earlier, to use removeAt */
+void removeDynArr (struct DynArr * da, TYPE test) {
+   int i;
+   for (i = 0; i < da->size; i++) {
+      if (EQ(test, da->data[i])) { /* found it */
+         _dynArrayRemoveAt(da, i);
+         return;
+      }
+   }
+}
+
+/* you must write the following */
+
+int containsDynArr (struct DynArr * da, TYPE e) {
+ for (int i = 0; i < da->size; i++)
+ 	if (da->data[i] == e)
+ 		return 1;
+ return 0;
+
+}
+
+
+
+
+

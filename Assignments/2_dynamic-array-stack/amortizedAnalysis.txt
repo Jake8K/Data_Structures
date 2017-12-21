@@ -1,0 +1,141 @@
+Jacob Karcz Project 2 amortized analysis 
+
+1. How many cost units are spent in the entire process of performing 32 consecutive push 
+	operations on an empty array which starts out at capacity 8, assuming that the array 
+	will double in capacity each time a new item is added to an already full dynamic array? 
+
+		Element/Add num  |   arraySize   |   Cost Units
+			1		8		1
+			2		8		1
+			3		8		1
+			4		8		1
+			5		8		1
+			6		8		1
+			7		8		1
+			8		8		1
+			9		16		9
+			10		16		1
+			11		16		1
+			12		16		1
+			13		16		1
+			14		16		1
+			15		16		1
+			16		16		1
+			17		32		17
+			18		32		1
+			19		32		1
+			20		32		1
+			21		32		1
+			22		32		1
+			23		32		1
+			24		32		1
+			25		32		1
+			26		32		1
+			27		32		1
+			28		32		1
+			29		32		1
+			30		32		1
+			31		32		1
+			32		32		1
+			TOTAL COST = (8 * 1) + 9 + (7 * 1) + 17 + (15 * 1)
+				   = 8 + 9 + 7 + 17 + 15
+				   = 56
+	
+	As N (ie. the number of pushes) grows large, under this strategy for resizing, what 
+	is the big-oh complexity for a push?
+	
+		O(1)+
+
+
+2. How many cost units are spent in the entire process of performing 32 consecutive push 
+	operations on an empty array which starts out at capacity 8, assuming that the array 
+	will grow by a constant 2 spaces each time a new item is added to an already full 
+	dynamic array? 
+	
+	
+		Element/Add num  |   arraySize   |   Cost Units
+			1		8		1
+			2		8		2
+			3		8		3
+			4		8		4
+			5		8		5
+			6		8		6
+			7		8		7
+			8		8		8
+			9		10		17
+			10		10		18
+			11		12		29
+			12		12		30
+			13		14		43
+			14		14		44
+			15		16		59
+			16		16		60
+			17		18		77
+			18		18		78
+			19		20		97
+			20		20		98
+			21		22		119
+			22		22		120
+			23		24		143
+			24		24		144
+			25		26		169
+			26		26		170
+			27		28		197
+			28		28		198
+			29		30		227
+			30		30		228
+			31		32		259
+			32		32		260
+
+	TOTAL COST = 260
+
+	
+	As N (ie. the number of pushes) grows large, under this strategy for resizing, 
+	what is the big-oh complexity for a push?
+ 
+ 	O(n)
+ 
+3. Suppose that a dynamic array stack doubles its capacity when it is full, and shrinks 
+	(on Pop only) its capacity by half when the array is half full or less. 
+	Can you devise a sequence of N push() and pop() operations which will result in poor 
+	performance (O(N^2) total cost)? 
+	
+		Push() until full
+		pop() until half full
+		push() until full
+		pop() until half full
+		... continue as above ad infinitum
+	
+		This sequence would squander time and resources.
+	
+	How might you adjust the array's shrinking policy to avoid this? 
+	(Hint: You may assume that the initial capacity of the array is N/2.)
+	
+		I would change it so that it would only diminish in size by half if it is 1/4 full 
+		(perhaps even 15 or 20 percent). I also might add a time variable, so if it has 
+		been at or bellow the half-size threshold for a certain amount clock ticks or 
+		something. Of course it depends on the application and whether time or memory 
+		was the system priority.
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

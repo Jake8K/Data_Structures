@@ -1,0 +1,74 @@
+/*****************************************************************************************
+write the code for the Stack functions push, pop, top and isEmpty. These functions should 
+use a dynamic array (passed as an argument) for the storage area. Use an assertion to 
+check that the * stack has at least one element when the functions top or pop are called. * 
+Your job will be greatly simplified by making use of the following functions, which you 
+developed in previous lessons:
+*****************************************************************************************/
+
+
+struct DynArr {
+TYPE * data;
+	int size;
+	int capacity;
+	};
+
+/* initialize a dynamic array structure with given capacity */
+	void initDynArr (struct DynArr * da, int initialCapacity);
+
+/* internal method to double the capacity of a dynamic array */
+	void _setCapacityDynArr (struct DynArr * da);
+
+/* release dynamically allocated memory for the dynamic array */
+	void freeDynArr (struct DynArr * da);
+
+/* return number of elements stored in dynamic array */
+	int sizeDynArr (struct DynArr * da);
+
+/* add a value to the end of a dynamically array */
+	void addDynArr (struct DynArr * da, TYPE e);
+
+/* remove the value stored at position in the dynamic array */
+	void removeAtDynArr (struct DynArr * da, int position);
+
+/* retrieve element at a given position */
+	TYPE getDynArray (struct DynArr * da, int position);
+
+/* store element at a given position */
+	void putDynArr (struct DynArr * da, int position, TYPE value);
+
+ 
+# define TYPE int
+
+struct DynArr {
+        TYPE *data;
+        int size;
+        int capacity;
+};
+
+
+/* Dynamic Array implementation of the Stack Interface */
+
+void pushDynArray (struct DynArr * da, TYPE e) {
+	if (da->size == da->capacity)
+ 		addDynArr (da, e);
+ 	else 
+ 		putDynArr (da, da->size, e);
+ 	
+ 	da->size++;
+
+}
+
+TYPE topDynArray (struct DynArr * da) {
+	assert(!isEmptyArray(da));
+	return da->data[size - 1];
+
+}
+
+void popDynArray (struct DynArr * da) {
+	assert(!isEmptyArray(da));
+	da->data[size] = 0;
+	da->size--;
+
+
+}

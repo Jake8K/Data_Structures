@@ -1,0 +1,429 @@
+//								HashTables and Maps
+
+//WORKSHEET 36 Map ADT Dictionary
+
+/*****************************************************************************************
+ * The idea behind the DynamicArrayDictionary is that internally elements in the dynamic 
+ * array are stored as instances of struct Association. The internal struct Association 
+ * stores a key and a value
+ *
+ * When searching to see if there is an entry with a given key, for example, each element
+ * of the dynamic array is examined in turn. The key is tested against the search key, 
+ * and if it matches the element has been found.  
+ *
+ * A similar approach is used to delete a value.  A loop is used to find the association 
+ * with the key that matches the argument. Once the index of this association is found, 
+ * the dynamic array remove operation is used to delete the value.
+ ****************************************************************************************/
+
+# ifndef DYARRAYDICTH
+# define DYARRAYDICTH
+
+/*
+ *  dynamic array dictionary interface file
+ */
+
+# ifndef KEYTYPE
+# define KEYTYPE char *
+# endif
+
+# ifndef VALUETYPE
+# define VALUETYPE double
+# endif
+
+struct association {
+   KEYTYPE key;
+   VALUETYPE value;
+};
+
+# define TYPE struct association *
+
+# include "dynamicArray.h"
+
+/* dictionary */
+void dyArrayDictionaryGet (struct dynArray *da, KEYTYPE key, VALUETYPE *valptr)
+void dyArrayDictionaryPut (struct dynArray * da, KEYTYPE key, VALUETYPE val);
+int dyArrayDictionaryContainsKey (struct dynArray * da, KEYTYPE key);
+void dyArrayDictionaryRemoveKey (struct dynArray * da, KEYTYPE key);
+
+# endif
+__________________________________________________________________________________________
+
+# include "dyArrayDictionary.h"
+# include "dyArrayDictionary.c"
+
+/*****************************************************************************************
+ *finds and places the value associated with key in valptr
+ ****************************************************************************************/
+void dyArrayDictionaryGet (struct dynArray *da, KEYTYPE key, VALUETYPE *valptr){   
+	assert (da != NULL);
+	
+	for (int i = 0; i < da->size; i++) {
+		if (da->data[i]->key == key)
+			valptr = da->data[i]->value;
+	}     
+
+}
+/*****************************************************************************************
+ * Elements in a dictionary must have unique keys. Within the method put one easy way to
+ * assure this is to first call containsKey, and if there is already an entry with the
+ * given key call remove to delete it. Then the new association is simply added to the end.
+ ****************************************************************************************/
+void dyArrayDictionaryPut (struct dynArray *da, KEYTYPE key, VALUETYPE val) {
+        struct association * newAss;
+        
+        if (dyArrayDictionaryContainsKey(da, key))
+                dyArrayDictionaryRemoveKey (da, key); //if the key was in there, remove it
+                
+        newAss = (struct association *) malloc(sizeof(struct association));
+        	assert(newAss != 0);
+        	
+        newAss->key = key;
+        newAss->value = val;
+        dyArrayAdd(da, newAss);
+}
+
+int dyArrayDictionaryContainsKey (struct dynArray *da, KEYTYPE key) {
+        
+	assert (da != NULL);
+	
+	for (int i = 0; i < da->size; i++) {
+		if (da->data[i]->key == key)
+			return 1;
+	}
+	return 0;   
+}
+
+
+
+
+void dyArrayDictionaryRemove (struct  dynArray *da, KEYTYPE key) {
+	assert (da != NULL);
+	
+	for (int i = 0; i < da->size; i++) {
+		if (da->data[i]->key == key) {
+			dyArrayRemoveAt(da, i);
+			//return;	//or keep checking just in case?
+		}
+	}   
+}
+
+
+
+__________________________________________________________________________________________
+__________________________________________________________________________________________
+__________________________________________________________________________________________
+__________________________________________________________________________________________
+
+
+//WORKSHEET 37 HASH TABLES AND OPEN ADDRESS HASHING
+
+
+struct openHashTable {
+   TYPE ** table;
+   int tablesize;
+   int count;
+};
+
+
+
+/**********************************************************************************/
+void initOpenHashTable (struct openHashTable * ht, int size) {
+   int i;
+   assert (size > 0);
+   ht->table = (TYPE **) malloc(size * sizeof(TYPE *));
+   assert(ht->table != 0);
+   for (i = 0; i < size; i++)
+ 		ht->table[i] = 0; 											// initialize empty
+   ht->tablesize = size;
+   ht->count = 0;
+}
+
+/**********************************************************************************/
+int openHashTableSize (struct openHashTable *ht) {
+	return ht->count; 
+}
+
+/**********************************************************************************/
+void openHashTableAdd (struct openHashTable * ht, TYPE  *newValue) {
+    int idx; 
+
+    // make sure we have space and under the load factor threshold
+    if ((ht->count / (double) ht->tablesize) > 0.75) 
+		_resizeOpenHashTable(ht);
+    ht->count++;
+
+	idx = HASH(newValue) % ht->tablesize;
+    
+	// To be safe, use only positive arithmetic. % may behave very differently on 
+	//diff implementations or diff languages .  However, you can do the following
+	// to deal with a negative result from HASH
+
+	//deal with negative hash value
+    if (idx < 0) 
+    	idx += ht->tablesize;
+
+	// add the value to the hash
+	
+	if(ht->table[idx] != 0) { // if the index value is taken
+		int i;
+		int boo = 0;
+		for (i = idx; i < ht->tablesize; i++) { //move down the table
+			if (ht->table[idx] == 0) {
+				ht->table[idx] = newValue;
+				boo = 1;
+			}
+		}
+		if (boo == 0)
+			for (i = 0; i < idx; i++) { // check the beginning of the table
+				if (ht->table[idx] == 0) 
+					ht->table[idx] = newValue;
+		}
+	}
+	else
+		ht->table[idx] = newValue; //that spot was free & newVal goes to index idx
+}
+
+
+/**********************************************************************************/
+int openHashTableBagContains (struct openHashTable *ht, TYPE  newValue) {
+
+	int idx; 
+
+	idx = HASH(newValue) % ht->tablesize;
+    if (idx < 0) 
+    	idx += ht->tablesize;
+    	
+	for (i = idx; i < ht->tablesize; i++) { //move down the table
+		if (ht->table[idx] == newValue) 
+			return 1;
+	for (i = 0; i < idx; i++) { 		// check the beginning of the table
+		if (ht->table[idx] == newValue) 
+			return 1;
+			
+	return 0;
+}
+
+/**********************************************************************************/
+void _resizeOpenHashTable (struct openHashTable *ht) {
+	assert (ht != NULL)
+	int i, 
+		idx;
+	int newSize = ht->tablesize * 2;
+	
+	//malloc new table * init
+	TYPE **newTable = (TYPE **) malloc((newSize) * sizeof(TYPE *));
+		assert(newTable != 0);
+	for (i = 0; i < newSie; i++)
+		newTable[i] = 0;
+	
+	//copy and rehash elements
+	for (i = 0; i < ht->tableSize; i++) {
+		//get new index
+		
+		idx = HASH(ht->table[i]) % newSize;
+		if (idx < 0) 
+			idx += newSize;
+
+		// add the value to new hash
+		if(newTable[idx] == 0) 
+			ht->table[idx] = newValue;  // that spot was free & newVal goes to index idx
+
+		else {							// else if the index value is taken
+			int j;
+			int boo = 0;
+			for (j = idx; j < newSize; j++) { //move down the table
+				if (newTable[idx] == 0) {
+					newTable[idx] = ht->table[i];
+					boo = 1;
+				}
+			}
+			if (boo == 0)
+				for (j = 0; j < idx; j++) { // check the beginning of the table
+					if (newTable[idx] == 0) 
+						newTable[idx] = ht->table[i];
+			}
+		}
+	}
+		
+	//free old table, set new table, set size
+	free(ht->table)
+	ht->table = newTable
+	ht->tablesize = newSize
+
+}
+
+
+
+
+
+
+
+
+
+
+__________________________________________________________________________________________
+__________________________________________________________________________________________
+__________________________________________________________________________________________
+__________________________________________________________________________________________
+__________________________________________________________________________________________
+
+
+//WORKSHEET 38 HASH TABLES USING BUCKETS
+
+
+struct hlink { 		
+   	TYPE value; 	 
+	struct hlink *next;	 
+};     
+
+struct hashTable {
+	struct hlink **table;
+	int tableSize;
+	int count;
+}; 
+
+void initHashTable (struct hashTable * ht, int size) {
+   int i;
+   assert (size > 0);
+   assert (ht != NULL);
+   
+   //allocate table array of hash links
+   ht->table = (hlink **) malloc(size * sizeof(hlink *));
+   assert(ht->table != 0);
+   
+   //initialize table
+   for (i = 0; i < size; i++)
+		ht->table[i] = 0;
+   /*
+   struct hlink *newLink;
+   for (i = 0; i < size; i++) {
+		newLink = (struct hlink *) malloc(sizeof(struct hlink));
+ 		hashTable->table[i] = newLink; 	
+ 	}										// initialize empty
+ 	*/
+   ht->tablesize = size;
+   ht->count = 0;
+} 
+
+
+int hashTableSize (struct hashTable * ht) { 
+	return ht->count; 
+}
+
+ 
+void hashTableAdd (struct hashTable *ht, TYPE newValue) {
+	
+	// compute hash value to find the correct bucket
+	int hashIndex = HASH(newValue) % ht->tablesize;
+	
+	if (hashIndex < 0) 
+		hashIndex += ht->tablesize; 
+		
+	struct link * newLink = (struct hlink *) malloc(sizeof(struct hlink));
+  		assert(newLink);
+  	
+  	newLink->value = newValue;
+  	newLink->next = ht->table[hashIndex];	
+  	ht->table[hashIndex] = newLink; 				// add to bucket
+  	ht->count++;
+  	
+  	if ((ht->count / (double) ht->tablesize) > 8.0) 
+  		_resizeHashTable(ht); 
+  		
+  	//if(ht->table[hashIndex] == 0) {
+  	//	ht->table[hashIndex] = newLink
+  		
+  
+} 
+
+
+int hashTableContains (struct hashTable * ht, TYPE testElement) { 
+	// compute hash value to find the correct bucket
+	int hashIndex = HASH(testElement) % ht->tablesize;
+	struct hlink *curLink;
+	
+	if (hashIndex < 0) 
+		hashIndex += ht->tablesize;
+	
+	//traverse list and seek testE
+	curLink = ht->table[hashIndex];	
+	while (curLink != 0) {
+		if (curLink->value == testElement)
+			return 1;
+		curLink = curLink->next;
+	}
+	return 0;
+		
+}
+
+
+void hashTableRemove (struct hashTable * ht, TYPE testElement) { 
+	int hashIndex = HASH(testElement) % ht->tablesize;
+	struct hlink *curLink;
+	struct hlink *lastLink;
+	
+	if (hashIndex < 0) 
+		hashIndex += ht->tablesize;
+		
+	if (hashTableContains (ht, testElement) {
+		curLink = ht->table[hashIndex]
+		lastLink = ht->table[hashIndex]
+		while (curLink != 0) {	
+			if (cur->value == testElement) {
+				lastLink->next = curLink->next; //unlink
+				free(curLink;					//free
+				curLink = 0;					//exitLoop
+			}
+			else {
+				lastLink = curLink;
+				curLink = curLink->next;
+			}
+		}
+		ht->count--;
+	}
+		
+} 
+
+void resizeTable (struct hashTable *ht) { 	
+	assert (ht != NULL)
+	int i, idx;
+	int newSize = ht->tablesize * 2;
+	
+	//malloc new dynamic array of pointers to links
+	hlink **newTable = (hlink **) malloc((newSize) * sizeof(hlink *));
+		assert(newTable != 0);
+		
+	for (i = 0; i < newSize; i++)
+		newTable[i] = 0; 
+	// or replace with: initHashTable(newTable, newSize);
+	
+	//copy and rehash elements
+	hlink *currentLink,
+		  *tempLink;
+	for (i = 0; i < ht->tableSize; i++) {
+		currentLink = ht->table[i];
+		while (current != 0) {
+			//get new index
+			idx = HASH(current) % newSize;
+			if (idx < 0) 
+				idx += newSize;
+			// add the value to new hash
+			tempLink = currentLink;
+			currentLink->next = newTable[idx];
+			newTable[idx] = currentLink;
+			
+			currentLink = tempLink->next;
+		}
+	}
+		
+	//free old table, set new table, set size
+	free(ht->table)
+	ht->table = newTable
+	ht->tablesize = newSize
+} 
+
+
+
+
+

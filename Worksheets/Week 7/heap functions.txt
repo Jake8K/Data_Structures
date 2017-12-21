@@ -1,0 +1,109 @@
+
+/*****************************************************************************************
+	heap data structure dynArray implementation 
+*****************************************************************************************/
+
+/*****************************************************************************************
+	swap function   /* swap elements i j */
+*****************************************************************************************/
+void swap (struct dyArray * v, int i, int j) {
+	TYPE temp = dyArrayGet(v, i);
+    dyArrayPut(v, i, dyArrayGet(v, j)); 
+	dyArrayPut(v, j, temp); 
+}
+
+
+/*****************************************************************************************
+	indexSmallest function       /* return index of smallest element */
+*****************************************************************************************/
+int indexSmallest (struct dyArray * v, int i, int j) {   
+	if (LT(dyArrayGet(v, i), dyArrayGet(v, j))  
+		return i;
+    return j;
+}
+   
+/*****************************************************************************************
+	heapGetFirst function	/* return the root */
+*****************************************************************************************/   
+TYPE heapGetFirst (struct dyArray *heap) {   
+    assert(dyArraySize(heap) > 0);    
+	return dyArrayGet(heap, 0);  
+}
+   
+/*****************************************************************************************
+	HeapRemoveFirst function     /* Copy the last element to the first  position */
+*****************************************************************************************/
+void HeapRemoveFirst(struct dyArray *heap) {
+      int last = dyArraySize(heap)-1;
+      assert (last != 0); /* make sure we have at least one element */
+                    /* Copy the last element to the first  position */
+      dyArrayPut(heap, 0, dyArrayrGet(heap, last)); 
+      dyArrayRemoveAt(heap, last);       /* Remove last element.*/
+      adjustHeap(heap, last, 0);/* Rebuild heap */
+   }
+
+/*****************************************************************************************
+	_adjustHeap function
+*****************************************************************************************/
+void _adjustHeap (struct dyArray * heap, int max, int pos) {
+	int left = pos * 2 + 1;
+	int right = pos * 2 + 2;
+	int min;
+	
+	if (right < max) {						//if right index w/in array, must be L&R nodes
+		min = indexSmallest (heap, left, right);	//calculate smallest child
+		
+		if (compare (dyArrayGet(heap, min), dyArrayGet(heap, pos) ) == -1) { 
+			swap (heap, pos, min);
+			_adjustHeap (heap, max, min);	//if min < pos, swap; adjust starting at min
+		}
+	if (left < max) {
+		if (compare (dyArrayGet(heap, left), dyArrayGet(heap, pos) ) == -1) { 
+			swap (heap, pos, left);
+			_adjustHeap (heap, max, left);
+		}
+	else
+		return;								//reached the bottom, done adjusting.
+}
+
+/*****************************************************************************************
+	heapAdd function
+*****************************************************************************************/
+void heapAdd (struct dyArray * heap, TYPE newValue) {
+	int parent;
+	
+	int pos = dyArraySize(heap); //the spot where newValue will go		
+	dyArrayAdd(heap, newValue); //add newValue
+	
+	while (pos != 0) {
+		parent = (pos - 1) / 2;
+		if (compare (dyArrayGet(heap, pos), dyArrayGet(heap, parent) ) == -1) {  
+			swap (heap, parent, pos);							//if pos < parent, swap
+			pos = parent;										// now move up	
+		}
+		else
+			return;							// if no swap occured, the tree is "balanced"
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

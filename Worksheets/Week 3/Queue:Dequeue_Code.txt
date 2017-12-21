@@ -1,0 +1,344 @@
+to read:
+wk 2:				wk 3:					wk 4:
+ch 5 ( pgs)			ch 7 p 1-2, 6-10		ch 8 p 4-9
+ch 6 p 1-10			ch 6 p 10-19			MT coming!	
+ch 8 p 1-4			ch 7 p 4-6
+
+
+Week 3 worksheets Code (Queue/Dequeue)
+
+-----------------------------------------WORKSHEET 20-------------------------------------
+------------------------------------Dynamic Array DEQUEUE--------------------------------
+
+
+void _dequeSetCapacity (struct deque *d, int newCap) {
+	int i;
+	
+	/* Create a new underlying array*/
+	TYPE *newData = (TYPE*)malloc(sizeof(TYPE)*newCap);
+	assert(newData != 0);
+	
+	/* copy elements to it */
+	int j = d->beg;
+	for(i = 0; i <  d->size; i++)
+	{
+		newData[i] = d->data[j];
+		j = j + 1;
+		if(j >= d->capacity)
+			j = 0;
+	}
+	
+	/* Delete the oldunderlying array*/
+	free(d->data);
+	/* update capacity and size and data*/
+	d->data = newData;
+	d->capacity = newCap;
+	d->beg = 0;
+}
+
+void dequeFree (struct deque *d) {
+   free(d->data); d->size = 0; d->capacity = 0;
+} 
+struct deque {
+   TYPE * data;
+   int capacity;
+   int size;
+   int beg;
+};
+
+void dequeInit (struct deque *d, int initCapacity) {
+   d->size = d->beg = 0;
+   d->capacity = initCapacity; assert(initCapacity > 0);
+   d->data = (TYPE *) malloc(initCapacity * sizeof(TYPE));
+   assert(d->data != 0);
+}
+
+int dequeSize (struct deque *d) { 
+	return d->size; 
+}
+
+
+void dequeAddFront (struct deque *d, TYPE newValue) {
+   	int physIndx;
+	if (d->size >= d->capacity)
+    	_dequeSetCapacity(d, 2 * d->capacity);
+   	
+   	physIndx =d->size - d->beg; //compute index <--------double check these formulas/asserts
+   	if (physIndx < 0)
+   		physIndex += d->capacity; //if less than 0, wrap back
+   	d->data[physIndx] = newValue
+   	d->size++;
+
+
+}
+
+void dequeAddBack (struct deque *d, TYPE newValue) {
+	int physIndx;
+   	if (d->size >= d->capacity) 
+   		_dequeSetcapacity(d, 2 * d->capacity);
+   	
+   	physIndx = d->beg + d->size; //compute index
+   	if (physIndx >= d->capacity)
+   		physIndex -= d->capacity; //if greater than cap, wrap back
+   	d->data[physIndx] = newValue
+   	d->size++;
+}
+
+
+
+TYPE dequeFront (struct deque *d) {
+	int physIndex;
+	assert (d->size > 0);
+	physIndex = (d->size - 1) - d->beg;
+	if (physIndex < 0)
+		index += d->capacity;
+	return d->data[physIndex];
+}
+
+TYPE dequeBack (struct deque *d) {
+	int physIndex;
+	assert (d->size > 0);
+	physIndex = d->beg + d->size - 1;
+	if (physIndex > d->capacity)
+		index -= d->capacity;
+	return d->data[index];
+}
+
+
+
+void dequeRemoveFront (struct deque *d) {
+	assert (d->beg < d->capacity)
+	d->beg--;
+
+
+}
+
+void dequeRemoveBack (struct deque *d) {
+	assert (d->size > 0);
+	d->size--;
+}
+
+
+-----------------------------------------WORKSHEET 17-------------------------------------
+-----------------------------Linked List Introduction, List Stack-------------------------
+
+
+struct link {
+   TYPE value;
+   struct link * next;
+};
+
+struct linkedListStack {
+   struct link *firstLink;
+}
+
+void linkedListStackInit (struct linkedListStack * s) { 
+	s->firstLink = 0; 
+}
+
+void linkedListStackFree (struct linkedListStack *s) {
+	while (! linkedListStackIsEmpty(s)) 
+		linkedListStackPop(s); 
+	}
+
+void linkedListStackPush (struct linkedListStack *s, TYPE d) {
+/* Fix me */
+   struct link * newLink = (struct link *) malloc(sizeof(struct link));
+   assert (newLink != 0);
+   
+   newlink->value = d;
+   newlink->next = s->firstLink;
+   s->firstLink = newLink;
+}
+
+TYPE linkedListStackTop (struct linkedListStack *s) {
+/* Fix me */
+	if (!linkedListStackIsEmpty(s))
+		return s->firstLink->value;
+}
+
+void linkedListStackPop (struct linkedListStack *s) {
+/* Fix me */
+	if (!linkedListStackIsEmpty(s)) {
+		link *temp = s->firstLink;
+		free(s->firstLink);
+		s->firstLink = s->temp->next;
+	}
+}
+int linkedListStackIsEmpty (struct linkedListStack *s) {
+/* Fix me */
+	if (firstLink == NULL)
+		return 1;
+	else
+		return 0;
+}
+
+-----------------------------------------WORKSHEET 18-------------------------------------
+------------------------------ Linked List Queue, pointer to Tail-------------------------
+
+struct link {
+   TYPE value;
+   struct link * next;
+};
+
+struct listQueue {
+   struct link *firstLink;
+   struct link *lastLink;
+};
+
+void listQueueInit (struct listQueue *q) {
+   struct link *lnk = (struct link *) malloc(sizeof(struct link));
+   assert(lnk != 0); /* lnk is the sentinel */
+   lnk->next = 0;
+   q->firstLink = q->lastLink = lnk;
+}
+
+void listQueueAddBack (struct listQueue *q, TYPE e) {
+   struct link * newLink = (struct link *) malloc(sizeof(struct link));
+   assert (newLink != 0);
+   
+    newlink->value = e;
+	newlink->next = 0;
+    q->lastLink->next = newLink;
+    q->lastLink = newLink;
+}
+
+
+TYPE listQueueFront (struct listQueue *q) {
+	if (!listQueueIsEmpty(q))
+		return q->firstLink->value;
+}
+
+
+void listQueueRemoveFront (struct listQueue *q) {
+	if (!listQueueIsEmpty(q)) {
+		link *temp = q->firstLink;
+		free(q->firstLink);
+		q->firstLink = q->temp->next;
+	}
+}
+
+int listQueueIsEmpty (struct listQueue *q) {
+	if (firstLink->next == lastLink)
+		return 1;
+	else
+		return 0;
+}
+
+
+
+-----------------------------------------WORKSHEET 19-------------------------------------
+---------------------------------------Linked List Deque----------------------------------
+
+
+struct dlink {
+   TYPE value;
+   struct dlink * next;
+   struct dlink * prev;
+};
+
+struct linkedList {
+   int size;
+   struct dlink * frontSentinel;
+   struct dlink * backSentinel;
+};
+
+	/* these functions are written for you */
+void LinkedListInit (struct linkedList *q) {
+   q->frontSentinel = malloc(sizeof(struct dlink));
+   assert(q->frontSentinel != 0);
+   q->backSentinel = malloc(sizeof(struct dlink));
+   assert(q->backSentinel);
+   q->frontSentinel->next = q->backSentinel;
+   q->backSentinel->prev = q->frontSentinell;
+   q->size = 0;
+}
+
+void linkedListFree (struct linkedList *q) {
+   while (q->size > 0)
+      linkedListRemoveFront(q);
+   free (q->frontSentinel);
+   free (q->backSentinel);
+   q->frontSentinel = q->backSentinel = null;
+}
+
+void LinkedListAddFront (struct linkedList *q, TYPE e)
+   { _addBefore(q, q->frontSentinel->next, e); }
+
+void LinkedListAddback (struct linkedList *q, TYPE e)
+   { _addBefore(q, q->backSentinel, e); }
+
+void linkedListRemoveFront (struct linkedList *q) {
+   assert(! linkedListIsEmpty(q));
+   _removeLink (q, q->frontSentinel->next);
+}
+
+void LinkedListRemoveBack (struct linkedList *q) {
+   assert(! linkedListIsEmpty(q));
+   _removeLink (q, q->backSentinel->prev);
+}
+
+int LinkedListIsEmpty (struct linkedList *q) {
+   return q->size == 0;
+}
+
+//shouldn't isEmpty(*q) say
+		//if (q->frontSentinel->next == q->backSentinel)
+		//		return 1;
+		//else
+		//		return 0;
+
+
+
+ 
+/***** write addLink and removeLink. Make sure they update the size field correctly *****/
+
+		/* _addBefore places a new link BEFORE the provide link, lnk */
+void _addBefore (struct linkedList *q, struct dlink *lnk, TYPE e) {
+   struct link * newLink = (struct link *) malloc(sizeof(struct link));
+   assert (newLink != 0);
+   
+    newlink->value = e;			
+	newlink->next = lnk;		//next link is the one we're adding before
+	lnk->prev->next = newLink;	//the previous link points to newLink
+    newLink->prev = lnk->prev;	//newLink points to previous link
+    lnk->prev = newLink; 		//the next link points to newLink
+    q->size++;					// augment dequeue size
+}
+
+void _removeLink (struct linkedList *q, struct dlink *lnk) {
+    assert(! linkedListIsEmpty(q));
+	struct dlink *tmp;
+	tmp = lnk;
+	lnk->next->prev = lnk->prev;	//next link's previous pointer skips over this link
+	lnk->prev->next = link->next	//previous link's next pointer skips over this link
+	free(tmp);						//dealloc
+	q->size--;						//dq just shrunk...
+}
+
+TYPE LinkedListFront (struct linkedList *q) {
+    assert(! linkedListIsEmpty(q));
+	return q->frontSentinel->next->value;
+}
+
+TYPE LinkedListBack (struct linkedList *q) {
+    assert(! linkedListIsEmpty(q));
+	return q->backSentinel->previous->value;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

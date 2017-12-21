@@ -1,0 +1,142 @@
+# ifndef TYPE
+# define TYPE int
+# endif
+
+struct DynArr
+{
+	TYPE *data;	/* pointer to the data array */
+	int size;		/* Number of elements in the array */
+	int capacity;	/* capacity of the array */
+};
+
+void initDynArr(struct DynArr *v, int capacity)
+{
+	v->data = malloc(sizeof(TYPE) * capacity);
+	assert(v->data != 0);
+	
+	v->size = 0;
+	v->capacity = capacity;
+
+}	
+void freeDynArr(struct DynArr *v)
+{
+	if(v->data != 0)
+	{
+		free(v->data); 	/* free the space on the heap */
+		v->data = 0;   	/* make it point to null */
+	}
+	v->size = 0;
+	v->capacity = 0;
+}
+
+
+
+int sizeDynArr( struct DynArr *v)
+{
+	return v->size;
+}
+
+
+void   addDynArr(struct DynArr *v, TYPE val)
+{
+	/* Check to see if a resize is necessary */
+	if(v->size >= v->capacity)
+		_setCapacityDynArr(v, 2 * v->capacity);
+	
+	v->data[v->size] = val;
+	v->size++;	
+}
+
+
+void _setCapacityDynArr(struct DynArr *v, int newCap)
+{
+	//create new array
+	struct DynArr newArr;
+	initDynArr (&newArr, newCap);
+	
+	//set size
+	newArr->size = v->size;
+	
+	//copy data
+	for (int i = 0; i < v->capacity; i++) {
+		newArr[i] = v[i];
+	}
+	
+	//free memory 
+	struct DynArray *temp = v;
+	v = newArr;
+	freeDynArr(&temp);
+	
+}
+
+TYPE getDynArr (struct DynArr * da, int position) {
+
+	return da->data[position];
+
+
+
+
+
+}
+
+void putDynArr(struct DynArr * da, int position, TYPEvalue) {
+
+	da->data[position- = TYPEvalue;
+
+
+
+
+}
+
+
+
+
+
+
+
+
+/* Write the function swap, which will exchange the values in two positions of a dynamic 
+array. We will use this function in later chapters.	*/
+
+void swapDynArr (struct DynArr * da, int i, int j) {
+
+	int x, y, temp;
+	int check1 = check2 = 0;
+	
+	for (int k = 0; k < da->size; k++)	{
+		if (da->data[k] == i) {
+			x = k;
+			check1 = 1;
+		}
+		if (da->data[k] == j) {
+			y = k;
+			check2 = 1;
+		}
+	}
+	
+	if (check1 == 1 && check2 ==1) {
+		temp = da->data[x];
+		da->data[x] = da->data[y];
+		da->data[y] = temp;
+	}
+
+
+}
+
+/*Write the function removeAtDynArr, which will remove a value at a specified index.  
+Remember, we do not want to leave gaps in the partially filed array.  We will use this 
+function in later chapters.	*/
+
+void removeAtDynArr (struct DynArr * da, int index) {
+
+	for (int i = index; i < da->size; i++) {
+		da->data[i] = da->data[++i];
+	}
+	da->data[size] = 0;
+	da->size--;
+	
+}
+
+
+
+
